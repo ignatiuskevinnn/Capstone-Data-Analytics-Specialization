@@ -1,6 +1,7 @@
 from flask import Flask, render_template 
 import pandas as pd
 import requests
+import dateparser
 from bs4 import BeautifulSoup 
 from io import BytesIO
 import base64
@@ -39,7 +40,8 @@ def scrap(url):
     df['Beli'] = df['Beli'].str.replace(",",".")
     df['Jual'] = df['Jual'].astype('float64')
     df['Beli'] = df['Beli'].astype('float64')
-    df.set_index("Tanggal")
+    df['Tanggal'] = df['Tanggal'].apply(dateparser.parse)
+    
 
     return df
 
@@ -49,7 +51,7 @@ def index():
 
     #This part for rendering matplotlib
     fig = plt.figure(figsize=(5,2),dpi=300)
-    df.plot()
+    df.set_index("Tanggal").plot()
     
     #Do not change this part
     plt.savefig('plot1',bbox_inches="tight") 
